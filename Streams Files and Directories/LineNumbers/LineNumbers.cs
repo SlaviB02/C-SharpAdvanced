@@ -1,34 +1,45 @@
 ﻿namespace LineNumbers
 {
+    using System;
     using System.IO;
+    using System.Collections.Generic;
     public class LineNumbers
     {
         static void Main()
         {
-            string inputPath = @"..\..\..\Files\input.txt";
-            string outputPath = @"..\..\..\Files\output.txt";
+            string inputFilePath = @"..\..\..\text.txt";
+            string outputFilePath = @"..\..\..\output.txt";
 
-            RewriteFileWithLineNumbers(inputPath, outputPath);
+            ProcessLines(inputFilePath, outputFilePath);
         }
 
-        public static void RewriteFileWithLineNumbers(string inputFilePath, string outputFilePath)
+        public static void ProcessLines(string inputFilePath, string outputFilePath)
         {
-            var reader = new StreamReader(inputFilePath);
-            using(reader)
+          int countPuncMarks = 0;
+            int countLetters = 0;
+            string[]lines= File.ReadAllLines(inputFilePath);
+            List<string> text = new List<string>();
+            int counter = 0;
+            for (int i=0;i<lines.Length;i++)
             {
-                int counter = 0;
-                string line = reader.ReadLine();
-                var writer = new StreamWriter(outputFilePath);
-                using(writer)
+                
+                for(int j=0;j<lines[i].Length;j++)
                 {
-                    while(line!=null)
+                    if (lines[i][j] == '!' || lines[i][j] == ',' || lines[i][j] == ';' || lines[i][j] == '.' || lines[i][j] == '?' || lines[i][j] == '-' ||
+                  lines[i][j] == '\'' || lines[i][j] == '\"' || lines[i][j] == ':')
                     {
-                        writer.WriteLine(++counter + ". " + line);
-                        line = reader.ReadLine();
+                        countPuncMarks++;
                     }
-                    
-                   
+                    else if(char.IsLetter(lines[i][j])==true)
+                    {
+                        countLetters++;
+                    }
                 }
+                string input= $"Line {++counter}: " + lines[i] + $" ({countLetters})({countPuncMarks})";
+                text.Add(input);
+                File.WriteAllLines(outputFilePath, text);
+                countLetters = 0;
+                countPuncMarks = 0;
                 
             }
         }
